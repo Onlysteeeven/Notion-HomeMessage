@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #191919;
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow: hidden;
+        }
+
+        .message-container {
+            padding: 2rem;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 500;
+            text-align: center;
+            max-width: 600px;
+            animation: fadeIn 1s ease-in;
+            transform-origin: center;
+        }
+
+        .greeting {
+            margin-bottom: 0.8rem;
+            animation: pulse 2s infinite;
+        }
+
+        .subtext {
+            opacity: 0.9;
+            margin-bottom: 0.8rem;
+        }
+
+        .extra-text {
+            opacity: 0.9;
+            margin-bottom: 0.8rem;
+        }
+
+        .activity {
+            min-height: 1.5em;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="message-container" id="message">
+        <div class="greeting" id="greeting"></div>
+        <div class="subtext" id="subtext"></div>
+        <div class="extra-text" id="extraText"></div>
+        <div class="activity" id="activity"></div>
+    </div>
+
+    <script>
+        const activities = [
+            "Watch a movie 🎬",
+            "Read a Book 📚",
+            "Listen to Music 🎵",
+            "Play a game 🎮"
+        ];
+        let currentActivityIndex = 0;
+
+        function updateMessage() {
+            const hour = new Date().getHours();
+
+            const greetingElement = document.getElementById('greeting');
+            const subtextElement = document.getElementById('subtext');
+            const extraTextElement = document.getElementById('extraText');
+            const activityElement = document.getElementById('activity');
+
+            // Morning: 12 AM (0) to 11:59 AM (11)
+            if (hour >= 0 && hour < 12) {
+                greetingElement.textContent = "Hey You, You're Up! ☀️";
+                subtextElement.textContent = "What would you be working on Today? 🌞";
+                extraTextElement.textContent = "";
+                activityElement.textContent = "";
+                if (window.activityInterval) {
+                    clearInterval(window.activityInterval);
+                    window.activityInterval = null;
+                }
+            }
+            // Afternoon: 12 PM (12) to 5:59 PM (17)
+            else if (hour >= 12 && hour < 18) {
+                greetingElement.textContent = "Hey You, You're back! 👋";
+                subtextElement.textContent = "Why don't you take a break and...";
+                extraTextElement.textContent = "";
+                
+                // Start activity rotation if not already started
+                if (!window.activityInterval) {
+                    activityElement.textContent = activities[0];
+                    window.activityInterval = setInterval(() => {
+                        activityElement.style.animation = 'none';
+                        activityElement.offsetHeight;
+                        activityElement.style.animation = 'slideIn 0.5s ease-out';
+                        activityElement.textContent = activities[currentActivityIndex];
+                        currentActivityIndex = (currentActivityIndex + 1) % activities.length;
+                    }, 3000); // Changed to 3 seconds
+                }
+            }
+            // Evening: 6 PM (18) to 11:59 PM (23)
+            else {
+                greetingElement.textContent = "Hey, You Made It! 😴";
+                subtextElement.textContent = "Time to rest and try again tomorrow";
+                extraTextElement.textContent = "Or be like us and work till 2am 💪";
+                activityElement.textContent = "";
+                if (window.activityInterval) {
+                    clearInterval(window.activityInterval);
+                    window.activityInterval = null;
+                }
+            }
+        }
+
+        // Update message immediately and then every minute
+        updateMessage();
+        setInterval(updateMessage, 60000);
+    </script>
+</body>
+</html>
